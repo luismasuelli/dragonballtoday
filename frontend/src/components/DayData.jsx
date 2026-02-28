@@ -1,7 +1,17 @@
-import { Box, Text, Title, Image, Stack, Group, Badge, Paper } from '@mantine/core';
+import { Box, Text, Title, Image, Stack, Group, Badge, Paper, Button } from '@mantine/core';
 import classes from './DayData.module.css';
 
-export function DayData({ dayData }) {
+const monthNames = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
+
+function formatDay(day) {
+  const [dayNum, monthNum] = day.split('-');
+  return `${parseInt(dayNum)} de ${monthNames[parseInt(monthNum) - 1]}`;
+}
+
+export function DayData({ dayData, upcomingDay, onSelectUpcoming }) {
   if (!dayData) {
     return (
       <Paper className={classes.container} p="xl" radius="lg">
@@ -12,20 +22,27 @@ export function DayData({ dayData }) {
           <Text className={classes.noDataText}>
             Explora el calendario para ver otros días importantes en la historia de Dragon Ball.
           </Text>
+          {upcomingDay && (
+            <Stack align="center" gap="sm" mt="md">
+              <Text className={classes.upcomingLabel}>Próximo evento:</Text>
+              <Button
+                variant="light"
+                color="orange"
+                size="md"
+                onClick={() => onSelectUpcoming?.(upcomingDay)}
+                className={classes.upcomingButton}
+              >
+                {formatDay(upcomingDay.day)} — {upcomingDay.title}
+              </Button>
+            </Stack>
+          )}
         </Stack>
       </Paper>
     );
   }
 
   const { day, title, year, description, type } = dayData;
-  const [dayNum, monthNum] = day.split('-');
-  
-  const monthNames = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-  
-  const formattedDay = `${parseInt(dayNum)} de ${monthNames[parseInt(monthNum) - 1]}`;
+  const formattedDay = formatDay(day);
   const imagePath = `/images/${day}.png`;
 
   return (
@@ -52,10 +69,10 @@ export function DayData({ dayData }) {
         >
           {/* Left Column: Year, Title, Description */}
           <Stack gap="md" className={classes.textContent}>
-            <Box className={classes.yearContainer}>
-              <Text className={classes.yearLabel}>Año original</Text>
+            <Group gap="xs" className={classes.yearContainer}>
+              <Text className={classes.yearLabel}>Año original:</Text>
               <Text className={classes.year}>{year}</Text>
-            </Box>
+            </Group>
 
             <Title order={1} className={classes.title}>
               {title}

@@ -1,7 +1,7 @@
-import { Drawer, Stack, Text, UnstyledButton, Box, ScrollArea, Badge, Group } from '@mantine/core';
+import { Drawer, Stack, Text, UnstyledButton, Box, ScrollArea, Badge, Group, Divider } from '@mantine/core';
 import classes from './Sidebar.module.css';
 
-export function Sidebar({ opened, onClose, days, onSelectDay, selectedDay }) {
+export function Sidebar({ opened, onClose, days, onSelectDay, selectedDay, onSelectToday, isViewingToday }) {
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -48,6 +48,32 @@ export function Sidebar({ opened, onClose, days, onSelectDay, selectedDay }) {
     >
       <ScrollArea h="calc(100vh - 80px)" scrollbarSize={6}>
         <Stack gap="lg" pb="xl">
+          {/* Today Entry */}
+          <Box>
+            <UnstyledButton
+              onClick={() => {
+                onSelectToday?.();
+                onClose();
+              }}
+              className={classes.todayButton}
+              data-selected={isViewingToday || undefined}
+            >
+              <Group gap="sm" wrap="nowrap">
+                <Badge 
+                  className={classes.todayBadge}
+                  variant={isViewingToday ? 'filled' : 'light'}
+                  color="yellow"
+                  size="lg"
+                >
+                  ★
+                </Badge>
+                <Text className={classes.todayText}>Hoy</Text>
+              </Group>
+            </UnstyledButton>
+          </Box>
+
+          <Divider color="orange.9" />
+
           {sortedMonths.map((month) => (
             <Box key={month}>
               <Text className={classes.monthHeader}>{month}</Text>
@@ -66,12 +92,12 @@ export function Sidebar({ opened, onClose, days, onSelectDay, selectedDay }) {
                         onClose();
                       }}
                       className={classes.dayButton}
-                      data-selected={selectedDay?.day === dayData.day || undefined}
+                      data-selected={!isViewingToday && selectedDay?.day === dayData.day || undefined}
                     >
                       <Group gap="sm" wrap="nowrap">
                         <Badge 
                           className={classes.dayNumber}
-                          variant={selectedDay?.day === dayData.day ? 'filled' : 'light'}
+                          variant={!isViewingToday && selectedDay?.day === dayData.day ? 'filled' : 'light'}
                           color="orange"
                           size="lg"
                         >

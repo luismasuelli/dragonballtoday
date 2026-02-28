@@ -42,10 +42,21 @@ function HamburgerIcon({ opened }) {
   );
 }
 
+// Convert DD-MM to day of year for comparison
+function dayToNumber(dayStr) {
+  const [day, month] = dayStr.split('-').map(Number);
+  // Approximate day of year (good enough for sorting)
+  return month * 100 + day;
+}
+
 function App() {
   const [sidebarOpened, { open: openSidebar, close: closeSidebar }] = useDisclosure(false);
   const [calendarData, setCalendarData] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
+  const [todayData, setTodayData] = useState(null);
+  const [todayKey, setTodayKey] = useState('');
+  const [upcomingDay, setUpcomingDay] = useState(null);
+  const [isViewingToday, setIsViewingToday] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,10 +70,26 @@ function App() {
         const today = new Date();
         const dayStr = String(today.getDate()).padStart(2, '0');
         const monthStr = String(today.getMonth() + 1).padStart(2, '0');
-        const todayKey = `${dayStr}-${monthStr}`;
+        const key = `${dayStr}-${monthStr}`;
+        setTodayKey(key);
         
-        const todayEntry = data.find((entry) => entry.day === todayKey);
+        const todayEntry = data.find((entry) => entry.day === key);
+        setTodayData(todayEntry || null);
         setSelectedDay(todayEntry || null);
+        
+        // Find upcoming day (next event after today)
+        const todayNum = dayToNumber(key);
+        const sortedDays = [...data].sort((a, b) => dayToNumber(a.day) - dayToNumber(b.day));
+        
+        // Find first day after today
+        let upcoming = sortedDays.find((entry) => dayToNumber(entry.day) > todayNum);
+        
+        // If no upcoming day this year, wrap to first day of next year
+        if (!upcoming && sortedDays.length > 0) {
+          upcoming = sortedDays[0];
+        }
+        
+        setUpcomingDay(upcoming || null);
         setLoading(false);
       })
       .catch((err) => {
@@ -73,6 +100,12 @@ function App() {
 
   const handleSelectDay = (dayData) => {
     setSelectedDay(dayData);
+    setIsViewingToday(false);
+  };
+
+  const handleSelectToday = () => {
+    setSelectedDay(todayData);
+    setIsViewingToday(true);
   };
 
   if (loading) {
@@ -111,6 +144,8 @@ function App() {
         days={calendarData}
         onSelectDay={handleSelectDay}
         selectedDay={selectedDay}
+        onSelectToday={handleSelectToday}
+        isViewingToday={isViewingToday}
       />
 
       {/* Main Content */}
@@ -128,7 +163,11 @@ function App() {
           </Box>
 
           {/* Day Content */}
-          <DayData dayData={selectedDay} />
+          <DayData 
+            dayData={selectedDay} 
+            upcomingDay={upcomingDay}
+            onSelectUpcoming={handleSelectDay}
+          />
         </Stack>
       </Container>
 

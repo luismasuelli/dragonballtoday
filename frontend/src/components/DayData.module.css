@@ -35,8 +35,9 @@
 
 .yearContainer {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.35rem;
 }
 
 .yearLabel {
@@ -48,11 +49,12 @@
 }
 
 .year {
-  font-size: 2.5rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
   color: var(--mantine-color-orange-3);
   line-height: 1;
-  text-shadow: 0 0 30px rgba(253, 126, 20, 0.3);
 }
 
 .title {
@@ -94,6 +96,24 @@
   color: var(--mantine-color-gray-4);
   text-align: center;
   max-width: 400px;
+}
+
+.upcomingLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--mantine-color-gray-5);
+  font-weight: 600;
+}
+
+.upcomingButton {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.upcomingButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(253, 126, 20, 0.3);
 }
 
 /* Responsive adjustments */
