@@ -137,8 +137,7 @@
 .logoContainer {
   position: relative;
   width: 100%;
-  max-width: 450px;
-  margin: 0 auto;
+  max-width: 900px;
 }
 
 .logo {
@@ -194,9 +193,5 @@
 
   .contentStack {
     padding-top: 4rem;
-  }
-
-  .logoContainer {
-    max-width: 300px;
   }
 }
